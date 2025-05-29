@@ -1,0 +1,36 @@
+changes:
+  - id: "20241225-00"
+    author: 测试人员
+    comment: 创建用户表
+    sql: |
+      CREATE TABLE IF NOT EXISTS users (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      username VARCHAR(50) NOT NULL UNIQUE COMMENT '用户名',
+      password VARCHAR(255) NOT NULL COMMENT '加密后的密码',
+      email VARCHAR(100) NOT NULL UNIQUE COMMENT '邮箱',
+      phone VARCHAR(20) COMMENT '手机号',
+      status TINYINT DEFAULT 1 COMMENT '状态：0-禁用, 1-正常',
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+      INDEX idx_email (email),
+      INDEX idx_phone (phone)
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户信息表';
+  - id: "20241226-01"
+    author: haha
+    comment: 创建订单表
+    sql: |
+      CREATE TABLE IF NOT EXISTS orders (
+      id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '订单ID',
+      user_id INT NOT NULL COMMENT '用户ID',
+      order_no VARCHAR(32) NOT NULL UNIQUE COMMENT '订单编号',
+      total_amount DECIMAL(12,2) NOT NULL COMMENT '订单总金额',
+      payment_status TINYINT DEFAULT 0 COMMENT '支付状态：0-未支付, 1-已支付',
+      shipping_address TEXT COMMENT '收货地址',
+      order_status ENUM('pending', 'processing', 'shipped', 'completed', 'cancelled') DEFAULT 'pending' COMMENT '订单状态',
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+      INDEX idx_user_id (user_id),
+      INDEX idx_order_no (order_no),
+      INDEX idx_created_at (created_at)
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='订单表';

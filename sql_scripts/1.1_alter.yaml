@@ -1,0 +1,11 @@
+changes:
+  - id: "20241227-00"
+    author: 测试人员1
+    comment: 创建用户表
+    sql: |
+      ALTER TABLE users ADD COLUMN avatar_url VARCHAR(255) COMMENT '用户头像URL';
+  - id: "20241228-01"
+    author: haha1
+    comment: 创建用户表
+    sql: |
+      ALTER TABLE orders ADD COLUMN paid_at TIMESTAMP NULL COMMENT '支付时间';
