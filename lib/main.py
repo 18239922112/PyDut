@@ -111,6 +111,7 @@ class DatabaseMigrator:
         try:
             self._connect()
             applied_changeids = self._get_applied_changeids()
+            executed_any = False  # ✅ 初始化变量
 
             #过滤配置文件中的指定版本
             if self.versions is None or self.versions.strip() in ('', 'None', '[]', '{}'):
@@ -120,6 +121,7 @@ class DatabaseMigrator:
                     for change in result:
                         if change['id'] not in applied_changeids:
                             self._execute_script(change['id'], change['author'], change['comment'], filename, change['sql'])
+                            executed_any = True
                         else:
                             continue
 
@@ -132,18 +134,19 @@ class DatabaseMigrator:
                     result = self._load_yaml_changes(filename2)
                     for change in result:
                         if change['id'] not in applied_changeids:
-                            self._execute_script(change['id'], change['author'], change['comment'], filename2,
-                                                 change['sql'])
+                            self._execute_script(change['id'], change['author'], change['comment'], filename2,change['sql'])
+                            executed_any = True
                         else:
                             continue
-
+            if not executed_any:
+                print("提示：没有新的迁移脚本需要执行。")
         except Exception as e:
             print(f"迁移失败: {e}")
             raise
         finally:
             if self.conn:
                 self.conn.close()
-
+        print("✅ 数据库迁移执行完毕。")
 
 if __name__ == "__main__":
     migrator = DatabaseMigrator()
